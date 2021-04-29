@@ -2,10 +2,40 @@ import React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars';
 import '../App.css';
+import UseLocalStorage from '../useLocalStorage';
 
 function TimelineInput() {
-    const [selectedLanguage, setSelectedLanguage] = React.useState();
     const dateValue: Date = new Date();
+    const [description, onchangeDes] = React.useState('');
+
+    function clickAddData(date: Date, description: string) {
+        let storage = new UseLocalStorage();
+
+        // patients from localStorage
+        let patients = storage.getPatients();
+
+        // timeline from localStorage
+        let data: any = {};
+        data = storage.getTimeline();
+        let timelineList = [];
+        for (let key in data) {
+            let value = data[key];
+            if (value != "") {
+                timelineList.push(value);
+            }
+        }
+
+        // add new timeline data
+        const newData = {
+            datetime: dateValue,
+            description: description,
+        }
+        timelineList.push(newData);
+
+        // setLocalStorage
+        let covidData = { patients, timelineList };
+        storage.setTimeline(covidData);
+    }
 
     return (
         <div className="inputpadding"
@@ -25,18 +55,20 @@ function TimelineInput() {
 
             <h2>รายละเอียด</h2>
             <TextInput
+                value={description}
+                onChangeText={onchangeDes}
                 multiline
                 numberOfLines={4}
                 style={styles.textinput}
             />
 
             <TouchableOpacity
-                onPress={() => console.log('click button')}
+                onPress={() => clickAddData(dateValue, description)}
                 style={styles.button}
             >+ เพิ่มข้อมูล
             </TouchableOpacity>
         </div>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
