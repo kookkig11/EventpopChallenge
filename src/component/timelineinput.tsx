@@ -16,14 +16,17 @@ function TimelineInput() {
 
         // timeline from localStorage
         let data: any = {};
-        data = storage.getTimeline();
         let timelineList = [];
-        for (let key in data) {
-            let value = data[key];
-            if (value != "") {
-                timelineList.push(value);
+        if (localStorage.getItem('covidData') != null) {
+            data = storage.getTimeline();
+            for (let key in data) {
+                let value = data[key];
+                if (value != "") {
+                    timelineList.push(value);
+                }
             }
         }
+        
 
         // add new timeline data
         const newData = {

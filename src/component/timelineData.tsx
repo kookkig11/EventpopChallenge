@@ -1,14 +1,27 @@
+import { time } from 'console';
 import React from 'react';
 import { StyleSheet, Text, View } from "react-native";
 import '../App.css';
 import UseLocalStorage from '../useLocalStorage'
 
 function TimelineData() {
+    var items: any[] = [];
+    var data: any[] = [];
+
     let storage = new UseLocalStorage();
     var gender = storage.getGender();
     var age = storage.getAge();
     var job = storage.getJob();
-    var timeline = storage.getTimeline();
+    if (localStorage.getItem('covidData') != null) {
+        for (const [key, value] of Object.entries(storage.getTimeline())) {
+            items.push(value);
+        }
+        // items.reduce((prev, cur) => ({
+        //     ...prev,
+        //     [cur.date]: (prev[cur.date] || []).concat(cur)
+        // }), {});
+        // console.log(items);
+    }
 
     return (
         <div
@@ -31,25 +44,37 @@ function TimelineData() {
                 <h2>อาชีพ {job}</h2>
             </View>
 
-            {/* {
-              Object.keys(this.items).map((i) =>
-                <div className="timeline">
-                  <div className="container right">
-                    <div className="content">
-                      <h2>2017</h2>
-                      <p>Lorem ipsum..</p>
-                    </div>
-                  </div>
+            {
+                items.map((obj, i: number) =>
+                    <View>
+                        <div className="timeline">
+                            <div className="container">
+                                <div className="content">
+                                    <span>
+                                        <h2 style={{ color: '#ffc107' }}>{items[i].date} {items[i].time}</h2>
+                                        <h2>{items[i].description}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </View>
+                    // <div className="timeline">
+                    //     <div className="container right">
+                    //         <div className="content">
+                    //             <h2>{items[i].description}</h2>
+                    //             <p>Lorem ipsum..</p>
+                    //         </div>
+                    //     </div>
 
-                  <div className="container right">
-                    <div className="content">
-                      <h2>2016</h2>
-                      <p>Lorem ipsum..</p>
-                    </div>
-                  </div>
-                </div>
-              )
-            } */}
+                    //     <div className="container right">
+                    //         <div className="content">
+                    //             <h2>2016</h2>
+                    //             <p>Lorem ipsum..</p>
+                    //         </div>
+                    //     </div>
+                    // </div>
+                )
+            }
         </div>
     );
 }

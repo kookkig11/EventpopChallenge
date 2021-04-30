@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Picker, TextInput, TouchableOpacity } from "react-native";
 import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars';
 import './App.css';
 import PatientsInput from './component/patientsinput';
@@ -8,96 +8,187 @@ import TimelineData from './component/timelineData';
 import UseLocalStorage from './useLocalStorage';
 
 
-export default class App extends React.Component {
-  //patients
-  gender: string;
-  age: string;
-  job: string;
-  timeline: any;
-  items: object[] = [];
+function App() {
+  // input
+  const [age, onchangeAge] = React.useState('');
+  const [job, onchangeJob] = React.useState('');
+  const [gender, selectGender] = React.useState('');
+  var dateValue: Date = new Date();
+  const [description, onchangeDes] = React.useState('');
 
-  constructor(props: any) {
-    super(props);
+  // refresh page
+  const [refreshing, setRefreshing] = React.useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(function () {
+      setRefreshing(false)
+    }, 2000);
+  }, []);
 
+  function clickAddData(date: Date, description: string) {
     let storage = new UseLocalStorage();
-    const timelineList = {
-      datetime: '',
-      description: ''
-    };
-    const patients = {
-      gender: 'หญิง',
-      age: parseInt('23'),
-      job: 'Frontend Developer'
-    };
+
+    // patients from localStorage
+    if (gender == '') {
+      selectGender('ชาย');
+    }
+    let patients = {
+      gender: gender,
+      age: parseInt(age),
+      job: job,
+    }
     storage.setPatients(patients);
+
+    if (localStorage.getItem('covidData') != null) {
+      // ageS = storage.getAge;
+      // jobS = storage.getJob;
+      // genderS = storage.getGender;
+    }
+
+    // timeline from localStorage
+    let data: any = {};
+    let timelineList = [];
+    if (localStorage.getItem('covidData') != null) {
+      data = storage.getTimeline();
+
+      for (let key in data) {
+        let value = data[key];
+        if (value != "") {
+          timelineList.push(value);
+        }
+      }
+    }
+
+    // add new timeline data
+    var ddate, dmonth, dmin, a, b, c;
+    var x = date.getDate() / 10;
+    var y = date.getMonth() / 10;
+    var z = date.getMinutes() / 10;
+    a = x.toString();
+    b = y.toString();
+    c = z.toString();
+    if (parseInt(a) == 0) {
+      ddate = '0' + date.getDate();
+    } else {
+      ddate = date.getDate();
+    }
+    if (parseInt(b) == 0) {
+      dmonth = '0' + date.getMonth();
+    } else {
+      dmonth = date.getMonth();
+    }
+    if (parseInt(c) == 0) {
+      dmin = '0' + date.getMinutes();
+    } else {
+      dmin = date.getMinutes();
+    }
+    const newData = {
+      date: ddate + '/' + dmonth + '/' + date.getFullYear(),
+      time: date.getHours() + ':' + dmin,
+      description: description,
+    }
+    timelineList.push(newData);
+
+    // setLocalStorage
     let covidData = { patients, timelineList };
     storage.setTimeline(covidData);
 
-    this.gender = storage.getGender();
-    this.age = storage.getAge();
-    this.job = storage.getJob();
-    this.timeline = storage.getTimeline();
-    this.items = this.timeline;
+    onRefresh();
   }
 
-  render() {
-    return (
-      <div className="App" style={{ padding: 20 }} >
-        <Text style={styles.titletext}>COVID Timeline Genetator</Text>
-        <div className="App-page" style={{ display: 'flex', flexDirection: 'row' }}>
+  React.useEffect(() => {
+    let storage = new UseLocalStorage();
+    if (localStorage.getItem('patients') != '') {
+      onchangeAge(storage.getAge());
+      onchangeJob(storage.getJob());
+      selectGender(storage.getGender);
+    }
+  });
 
-          <div className="inputData" style={{ flex: '40%' }}>
-            <PatientsInput />
+  return (
+    <div className="App" style={{ padding: 20 }} >
+      <Text style={styles.titletext}>COVID Timeline Genetator</Text>
+      <div className="App-page" style={{ display: 'flex', flexDirection: 'row' }}>
 
-            <TimelineInput />
+        <div className="inputData" style={{ flex: '40%' }}>
+          {/* input patients */}
+          <div
+            className="inputpadding"
+            style={{
+              padding: 10, paddingTop: 3, borderRadius: 5, margin: 10
+            }}>
+            <h1 style={{ color: '#27a742' }}>ข้อมูลผู้ป่วย</h1>
+
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+
+              <div style={{ flex: '50%', marginRight: 10 }}>
+                <h2>เพศ</h2>
+                <Picker
+                  selectedValue={gender}
+                  onValueChange={(itemValue, itemIndex) => selectGender(itemValue)}
+                  style={styles.picker}>
+                  <Picker.Item label="ชาย" value="ชาย" />
+                  <Picker.Item label="หญิง" value="หญิง" />
+                </Picker>
+              </div>
+
+              <div style={{ flex: '50%', marginLeft: 1 }}>
+                <h2>อายุ</h2>
+                <TextInput
+                  value={age}
+                  onChangeText={onchangeAge}
+                  keyboardType="numeric"
+                  style={styles.textinput}
+                />
+              </div>
+
+            </div>
+
+            <h2>อาชีพ</h2>
+            <TextInput
+              value={job}
+              onChangeText={onchangeJob}
+              style={styles.textinput}
+            />
           </div>
 
-          <TimelineData />
-
-          {/* <div
+          {/* timeline input */}
+          <div className="inputpadding"
             style={{
-              flex: '60%',
-              borderColor: '#ffc107',
-              borderStyle: 'solid',
-              padding: 10,
-              margin: 10,
-              // width: '100%',
-              justifyContent: 'center',
+              padding: 10, paddingTop: 3, borderRadius: 5, margin: 10
             }}>
+            <h1 style={{ color: '#27a742' }}>ข้อมูลไทม์ไลน์</h1>
 
-            <Text style={[styles.titletext, styles.boldtext,]}>Timeline</Text>
+            <h2>วันเวลา</h2>
+            <DateTimePickerComponent
+              style={{
+                fontFamily: 'Prompt',
+                backgroundColor: '#fff',
+                padding: 5
+              }}
+              value={dateValue} />
 
-            <View
-              style={[styles.button, { borderRadius: 100 }]}
-            >
-              <h1>ผู้ป่วย{this.gender} อายุ {this.age} ปี</h1>
-              <h2>อาชีพ {this.job}</h2>
-            </View>
+            <h2>รายละเอียด</h2>
+            <TextInput
+              value={description}
+              onChangeText={onchangeDes}
+              multiline
+              numberOfLines={4}
+              style={styles.textinput}
+            />
 
-            {
-              Object.keys(this.items).map((i) =>
-                <div className="timeline">
-                  <div className="container right">
-                    <div className="content">
-                      <h2>2017</h2>
-                      <p>Lorem ipsum..</p>
-                    </div>
-                  </div>
-
-                  <div className="container right">
-                    <div className="content">
-                      <h2>2016</h2>
-                      <p>Lorem ipsum..</p>
-                    </div>
-                  </div>
-                </div>
-              )
-            }
-          </div> */}
+            <TouchableOpacity
+              onPress={() => clickAddData(dateValue, description)}
+              style={styles.button}
+            >+ เพิ่มข้อมูล
+            </TouchableOpacity>
+          </div>
         </div>
-      </div >
-    );
-  }
+
+        <TimelineData />
+      </div>
+    </div >
+  );
 }
 
 const styles = StyleSheet.create({
@@ -138,3 +229,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   }
 });
+
+export default App;

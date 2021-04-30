@@ -1,3 +1,4 @@
+import { time } from 'node:console';
 import React from 'react';
 
 export default class UseLocalStorage {
@@ -35,7 +36,10 @@ export default class UseLocalStorage {
     }
 
     getTimeline(): object {
-        var timeline = JSON.parse(localStorage.getItem('covidData')!).timelineList;
+        var timeline;
+        if (JSON.parse(localStorage.getItem('covidData')!).timelineList != null) {
+            timeline = JSON.parse(localStorage.getItem('covidData')!).timelineList;
+        }
         return timeline;
     }
 }
