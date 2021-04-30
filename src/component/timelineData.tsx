@@ -58,21 +58,6 @@ function TimelineData() {
                             </div>
                         </div>
                     </View>
-                    // <div className="timeline">
-                    //     <div className="container right">
-                    //         <div className="content">
-                    //             <h2>{items[i].description}</h2>
-                    //             <p>Lorem ipsum..</p>
-                    //         </div>
-                    //     </div>
-
-                    //     <div className="container right">
-                    //         <div className="content">
-                    //             <h2>2016</h2>
-                    //             <p>Lorem ipsum..</p>
-                    //         </div>
-                    //     </div>
-                    // </div>
                 )
             }
         </div>

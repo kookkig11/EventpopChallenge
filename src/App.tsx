@@ -39,12 +39,6 @@ function App() {
     }
     storage.setPatients(patients);
 
-    if (localStorage.getItem('covidData') != null) {
-      // ageS = storage.getAge;
-      // jobS = storage.getJob;
-      // genderS = storage.getGender;
-    }
-
     // timeline from localStorage
     let data: any = {};
     let timelineList = [];
@@ -166,7 +160,7 @@ function App() {
                 backgroundColor: '#fff',
                 padding: 5
               }}
-              value={dateValue} />
+              value={dateValue}/>
 
             <h2>รายละเอียด</h2>
             <TextInput
