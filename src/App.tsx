@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, Picker, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, Picker, TextInput, TouchableOpacity } from "react-native";
 import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars';
 import './App.css';
-import PatientsInput from './component/patientsinput';
-import TimelineInput from './component/timelineinput';
+// import PatientsInput from './component/patientsinput';
+// import TimelineInput from './component/timelineinput';
 import TimelineData from './component/timelineData';
 import UseLocalStorage from './useLocalStorage';
 
@@ -15,6 +15,16 @@ function App() {
   const [gender, selectGender] = React.useState('');
   var dateValue: Date = new Date();
   const [description, onchangeDes] = React.useState('');
+
+  // init
+  if (localStorage.getItem('patients') == null) {
+    let initdata = {
+      gender: '',
+      age: parseInt(''),
+      job: '',
+    }
+    localStorage.setPatients(initdata);
+  }
 
   // refresh page
   const [refreshing, setRefreshing] = React.useState(false);
