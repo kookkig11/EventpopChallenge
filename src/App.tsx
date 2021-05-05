@@ -19,9 +19,9 @@ function App() {
   // init
   if (localStorage.getItem('patients') == null) {
     let initdata = {
-      gender: '',
+      gender: null,
       age: parseInt(''),
-      job: '',
+      job: null,
     }
     localStorage.setItem('patients', JSON.stringify(initdata));
   }
