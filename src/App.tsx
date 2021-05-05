@@ -23,7 +23,7 @@ function App() {
       age: parseInt(''),
       job: '',
     }
-    localStorage.setPatients(initdata);
+    localStorage.setItem('patients', JSON.stringify(initdata));
   }
 
   // refresh page
