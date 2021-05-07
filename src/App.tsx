@@ -13,6 +13,7 @@ function App() {
   const [age, onchangeAge] = React.useState('');
   const [job, onchangeJob] = React.useState('');
   const [gender, selectGender] = React.useState('');
+  // const [dateValue, changeDate] = React.useState(new Date());
   var dateValue: Date = new Date();
   const [description, onchangeDes] = React.useState('');
 
@@ -35,7 +36,7 @@ function App() {
     }, 2000);
   }, []);
 
-  function clickAddData(date: Date, description: string) {
+  function clickAddData(gender: string, age: string, job:string, date: Date, description: string) {
     let storage = new UseLocalStorage();
 
     // patients from localStorage
@@ -102,7 +103,7 @@ function App() {
 
   React.useEffect(() => {
     let storage = new UseLocalStorage();
-    if (localStorage.getItem('patients') != '') {
+    if (localStorage.getItem('patients') != null) {
       onchangeAge(storage.getAge());
       onchangeJob(storage.getJob());
       selectGender(storage.getGender);
@@ -182,7 +183,7 @@ function App() {
             />
 
             <TouchableOpacity
-              onPress={() => clickAddData(dateValue, description)}
+              onPress={() => clickAddData(gender, age, job, dateValue, description)}
               style={styles.button}
             >+ เพิ่มข้อมูล
             </TouchableOpacity>
